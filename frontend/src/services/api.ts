@@ -1,4 +1,5 @@
 import { Method, ResponseType } from "axios";
+import Cookies from "js-cookie";
 import axios from "./axios";
 
 type apiParameter = {
@@ -19,6 +20,11 @@ const API: any = async ({
   headers
 } : apiParameter) => {
   //REQUEST JSON
+
+  headers = {
+    ...headers,
+    user_id: Cookies.get("user_id") || ""
+  };
 
   let axiosRequestObject = {
     method,

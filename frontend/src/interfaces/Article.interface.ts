@@ -6,8 +6,9 @@ export default interface Article {
   body: string
   category: string
   tags: string[]
-  created_date: Date
+  created_date: string
   view_count: number
   comment_count: number
   like_count: number
+  is_liked: boolean
 }

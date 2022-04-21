@@ -5,8 +5,10 @@ export type ArticleDocument = Article & Document;
 
 @Schema()
 export class Article {
-  @Prop()
-  id: string;
+  _id: string;
+
+  @Prop({required: true})
+  slug: string;
 
   @Prop({required: true})
   title: string;
@@ -22,6 +24,18 @@ export class Article {
 
   @Prop({ default: Date.now })
   created_date: Date;
+
+  @Prop({ default: 0 })
+  view_count: number
+
+  @Prop({ default: 0 })
+  comment_count: number
+
+  @Prop({ default: 0 })
+  like_count: number
+
+  @Prop()
+  is_liked?: boolean
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article)

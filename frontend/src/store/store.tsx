@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
-import articleSlice from './slices/articleSlice'
+import articleSlice from './Article.slice'
+import userSlice from './User.slice'
 
 const logger = (store: any) => (next: Function) => (action: object) => {
   console.log('dispatching', action)
@@ -10,7 +11,8 @@ const logger = (store: any) => (next: Function) => (action: object) => {
 
 const store = configureStore({
   reducer: {
-    articles: articleSlice
+    articles: articleSlice,
+    users: userSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(logger)

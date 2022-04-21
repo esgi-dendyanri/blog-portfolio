@@ -3,6 +3,7 @@ import ReactMarkdown from 'markdown-to-jsx';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
+import "./Markdown.css"
 
 function MarkdownListItem(props: any) {
   return <Box component="li" sx={{ mt: 1, typography: 'body1' }} {...props} />;
@@ -46,5 +47,24 @@ const options = {
 };
 
 export default function Markdown(props: any) {
-  return <ReactMarkdown options={options} {...props} />;
+  return (
+    <div className={props.className}>
+      <Link href={props.url} color="inherit" variant='body2'>
+        <Typography variant="h4" component="h1" gutterBottom={true}>
+          {props.title}
+        </Typography>
+      </Link>
+
+      <div className={props.isCutOff ? "cut-markdown" : ""}>
+        <ReactMarkdown options={options}>
+          {props.children}
+        </ReactMarkdown>
+
+        { props.isCutOff ? (
+          <div className='cut-markdown-gradient'>
+          </div>
+        ): false}
+      </div>
+    </div>
+  )
 }

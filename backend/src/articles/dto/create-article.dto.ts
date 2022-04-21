@@ -3,5 +3,4 @@ export class CreateArticleDto {
   body: string
   category: string
   tags: string[]
-  created_date: Date
 }

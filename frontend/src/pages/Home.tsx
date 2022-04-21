@@ -1,37 +1,25 @@
-import { useEffect } from "react"
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-
+import { useEffect, } from "react"
 import Markdown from '../components/Markdown';
 import Homepage from "../layouts/Homepage"
-import {getLatest} from "../services/articles"
-import { setLatests } from "../store/slices/articleSlice"
-import Article from "../interfaces/article"
-import { useAppSelector, useAppDispatch } from "../store/hooks"
+import Article from "../interfaces/Article.interface"
+import LatestArticles from "../interfaces/LatestArticles.interface";
+import { getLatestArticles } from "../store/Article.slice"
+import { Grid, Pagination, PaginationItem, Link } from "@mui/material";
+import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 const Home = () => {
-  const dispatch = useAppDispatch();
-  let latestArticles: Article[] = useAppSelector((state) => state.articles.latests);
+  const dispatch = useDispatch();
+  let latestArticles: LatestArticles = useSelector((state: RootState): LatestArticles => state.articles.latests);
+  const limit = 3
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const page: number = parseInt(query.get('page') || "") as number
 
   useEffect(() => {
-    getLatest(3, 0)
-    .then((response: any) => {
-      if ( response.status === 200 ) {
-        let articles: Article[] = [];
-        response.data.forEach((item: any) => {
-          let article: Article = {} as Article;
-          article.title = item.title
-          article.body = item.body
-          articles.push(article)
-        })
-        dispatch(setLatests(articles))
-      }
-    })
-    .catch((err: any) => {
-      console.error(err)
-    })
-  }, [dispatch])
+    getLatestArticles(dispatch, limit, page)
+  }, [dispatch, page])
 
   return (
     <Homepage>
@@ -41,16 +29,46 @@ const Home = () => {
         md={8}
         sx={{
           '& .markdown': {
-            py: 3,
+            display: "block",
+            borderBottom: "1px solid gray",
+            marginBottom: "30px",
+            paddingBottom: "20px",
           },
         }}
       >
-        asdasd
-        {latestArticles.map((article: Article, i: number) => (
-          <Markdown className="markdown" key={article.body.substring(0, 40)}>
-            {article.body.substring(0, 40)}
-          </Markdown>
-        ))}
+        {Object.keys(latestArticles).length === 0 || latestArticles.total == null ? (
+          <>loading</>
+        ) : latestArticles.error ? (
+          <>error</>
+        ): latestArticles.total === 0 ? (
+          <>empty</>
+        ): (
+          <>
+            {latestArticles.articles.map((article: Article, i: number) => (
+              <Markdown
+                className="markdown"
+                key={article.id} 
+                url={"/articles/" + article.slug}
+                title={article.title} 
+                isCutOff={true}
+              >
+                {article.body}
+              </Markdown>
+            ))}
+
+            <Pagination
+              page={page+1}
+              count={latestArticles.totalPage}
+              renderItem={(item) => (
+                <PaginationItem
+                  component={Link}
+                  href={`/articles?page=${item.page-1}`}
+                  {...item}
+                />
+              )}
+            />
+          </>
+        )}
       </Grid>
     </Homepage>
   )

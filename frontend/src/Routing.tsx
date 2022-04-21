@@ -1,5 +1,6 @@
 import { lazy, ReactElement } from "react";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
+import SingleArticle from "./pages/SingleArticle";
 const Home = lazy(() => import('./pages/Home'));
 
 type routeItem = {
@@ -17,6 +18,18 @@ const ROUTES: routes[] = [
         path: "/",
         key: "ROOT",
         element: <Home />,
+        routes: []
+    },
+    {
+        path: "/articles",
+        key: "ROOT",
+        element: <Home />,
+        routes: []
+    },
+    {
+        path: "/articles/:slug",
+        key: "ROOT",
+        element: <SingleArticle />,
         routes: []
     },
     // {

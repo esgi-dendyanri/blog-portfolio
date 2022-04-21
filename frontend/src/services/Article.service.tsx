@@ -9,3 +9,10 @@ export const getLatest: any = (limit: number, page: number) => {
     }
   })
 }
+
+export const getOne: any = (slug: string) => {
+  return API({
+    url: "articles/" + slug,
+    method: "GET",
+  })
+}
