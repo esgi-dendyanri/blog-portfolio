@@ -10,6 +10,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { LikesService } from 'src/likes/likes.service';
 import { Like } from 'src/likes/interfaces/like.interface';
 import { GetLikeDto } from 'src/likes/dto/get-like.dto';
+import LatestComments from './interfaces/latestComments.interface';
 
 @Injectable()
 export class CommentsService {
@@ -48,9 +49,10 @@ export class CommentsService {
     return comment
   }
 
-  async getComments(getCommentDto: GetCommentDto, user_id: string): Promise<Comment[]> {
+  async getComments(getCommentDto: GetCommentDto, user_id: string): Promise<LatestComments> {
     let limit: number = 3
     let page: number = 0
+    let latestComments: LatestComments = {} as LatestComments
 
     let article: Article = await this.articlesService.getArticleById(getCommentDto.article_id);
     if ( article === null ) {
@@ -59,29 +61,40 @@ export class CommentsService {
 
     if ( getCommentDto.limit )
       limit = parseInt(getCommentDto.limit)
+    if ( limit < 1 )
+      limit = 1
     if ( getCommentDto.page )
       page = parseInt(getCommentDto.page)
+    if ( page < 0 )
+      page = 0
 
-    let comments: Comment[] = await this.commentModel.find({article})
+    latestComments.limit = limit
+    latestComments.page = page
+    latestComments.comments = await this.commentModel.find({article})
       .sort({ created_date: "desc" })
       .limit(limit)
       .skip(limit * page)
       .exec()
+
+    let total: number = await this.commentModel.find({article}).count().exec()
+    latestComments.total = total
+    latestComments.totalPage = Math.ceil(total/limit)
     
-    if ( comments && comments.length ) {
-      for (let i = 0; i < comments.length; i++) {
-        let comment = comments[i];
-        let like: Like | string = await this.likesService.getLike({
-          user_id,
-          comment_id: comment._id
-        } as GetLikeDto)
-        
-        comment.is_liked = !!like
-        comments[i] = comment
-      }
+    if ( latestComments.comments && latestComments.comments.length ) {
+      latestComments.comments = await Promise.all(
+        latestComments.comments.map(async(comment: Comment): Promise<Comment> => {
+          let like: Like | string = await this.likesService.getLike({
+            user_id,
+            comment_id: comment._id
+          } as GetLikeDto)
+
+          comment.is_liked = !!like
+          return comment
+        })
+      )
     }
 
-    return comments
+    return latestComments
   }
 
   async getCommentById(_id: string): Promise<Comment> {

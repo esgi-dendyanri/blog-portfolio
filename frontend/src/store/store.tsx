@@ -1,6 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { reducer as formReducer } from 'redux-form'
 import articleSlice from './Article.slice'
 import userSlice from './User.slice'
+import commentSlice from './Comment.slice'
 
 const logger = (store: any) => (next: Function) => (action: object) => {
   console.log('dispatching', action)
@@ -13,6 +15,8 @@ const store = configureStore({
   reducer: {
     articles: articleSlice,
     users: userSlice,
+    comments: commentSlice,
+    form: formReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(logger)

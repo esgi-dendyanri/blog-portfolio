@@ -35,10 +35,12 @@ export class LikesService {
         return "Comment is not found"
       }
     }
+
     const createdLike = new this.likeModel(createLikeDto)
     createdLike.user_id = user_id
     createdLike.article = article
     createdLike.comment = comment
+
     let like: Like = null
     try {
       let condition: Object

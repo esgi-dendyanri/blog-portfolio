@@ -62,7 +62,6 @@ export class ArticlesService {
         slug = cleanTitle + (random > 0 ? "-" + random : "")
         try {
           let article: Article = await this.articleModel.findOne({slug}).exec()
-          console.log("article", article)
           if ( article === null ) {
             isExist = false
           }

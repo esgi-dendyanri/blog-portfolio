@@ -31,6 +31,7 @@ export const counterSlice = createSlice({
       state.latests = action.payload
     },
     setSelected: (state, action: PayloadAction<SingleArticle>) => {
+      console.log("action.payload", action.payload)
       state.selected = action.payload
     },
   }
@@ -87,6 +88,7 @@ export const getLatestArticles = (dispatch: Dispatch<any>, limit: number, page: 
 
 export const getArticle = (dispatch: Dispatch<any>, slug: string) => {
   let singleArticle: SingleArticle = {} as SingleArticle
+  console.log("slug", slug)
 
   getOne(slug)
   .then((response: any) => {
@@ -98,6 +100,7 @@ export const getArticle = (dispatch: Dispatch<any>, slug: string) => {
     }
   })
   .catch((err: any) => {
+    console.log("asdasd", err)
     console.error(err)
     singleArticle.error = "Not responding"
 
@@ -109,7 +112,6 @@ export const toggleLikeArticle = (dispatch: Dispatch<any>, singleArticle: Single
   let likeFunc: Function;
 
   likeFunc = singleArticle.article.is_liked ? unlikeArticle : likeArticle
-  console.log("1111 is_liked", singleArticle.article.is_liked)
 
   likeFunc(singleArticle.article.id)
   .then((response: any) => {
@@ -121,8 +123,6 @@ export const toggleLikeArticle = (dispatch: Dispatch<any>, singleArticle: Single
       else
         like_count -= 1
 
-      console.log("is_liked", is_liked)
-      console.log("like_count", like_count)
       dispatch(setSelected({
         ...singleArticle,
         article: {
@@ -132,7 +132,6 @@ export const toggleLikeArticle = (dispatch: Dispatch<any>, singleArticle: Single
         }
       }))
     } else {
-      dispatch(setSelected(singleArticle))
     }
   })
   .catch((err: any) => {

@@ -1,5 +1,5 @@
 import { useEffect, } from "react"
-import Markdown from '../components/Markdown';
+import ArticleItem from '../components/ArticleItem';
 import Homepage from "../layouts/Homepage"
 import Article from "../interfaces/Article.interface"
 import LatestArticles from "../interfaces/LatestArticles.interface";
@@ -12,10 +12,10 @@ import { RootState } from "../store/store";
 const Home = () => {
   const dispatch = useDispatch();
   let latestArticles: LatestArticles = useSelector((state: RootState): LatestArticles => state.articles.latests);
-  const limit = 3
+  const limit = 6
   const location = useLocation();
   const query = new URLSearchParams(location.search);
-  const page: number = parseInt(query.get('page') || "") as number
+  const page: number = parseInt(query.get('page') || "0") as number
 
   useEffect(() => {
     getLatestArticles(dispatch, limit, page)
@@ -26,8 +26,9 @@ const Home = () => {
       <Grid
         item
         xs={12}
-        md={8}
         sx={{
+          marginTop: "50px",
+
           '& .markdown': {
             display: "block",
             borderBottom: "1px solid gray",
@@ -44,17 +45,18 @@ const Home = () => {
           <>empty</>
         ): (
           <>
-            {latestArticles.articles.map((article: Article, i: number) => (
-              <Markdown
-                className="markdown"
-                key={article.id} 
-                url={"/articles/" + article.slug}
-                title={article.title} 
-                isCutOff={true}
-              >
-                {article.body}
-              </Markdown>
-            ))}
+            <Grid container spacing={2}>
+              {latestArticles.articles.map((article: Article, i: number) => (
+                <ArticleItem
+                  key={article.id} 
+                  url={"/articles/" + article.slug}
+                  title={article.title} 
+                  article={article}
+                >
+                  {article.body}
+                </ArticleItem>
+              ))}
+            </Grid>
 
             <Pagination
               page={page+1}

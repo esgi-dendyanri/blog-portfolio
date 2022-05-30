@@ -1,3 +1,8 @@
+html:root {
+  --nav-width: 300px;
+  --backgroud-color: rgb(86, 25, 129);
+}
+
 .App {
   text-align: center;
 }
