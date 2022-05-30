@@ -18,7 +18,9 @@ const validate = (values: any) => {
         errors[name] = validation(values[name])
         return false;
       }
+      return validation
     })
+    return name
   })
 
   return errors;
