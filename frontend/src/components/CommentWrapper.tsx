@@ -26,7 +26,7 @@ export default function CommentWrapper(props: CommentWrapperProps) {
   let comments: LatestComments = useSelector((state: RootState): LatestComments => state.comments.latests);
 
   React.useEffect(() => {
-    getLatestComments(dispatch, singleArticle.article.id, limit, page)
+    dispatch(getLatestComments(singleArticle.article.id, limit, page))
   }, [dispatch, page])
 
   return (

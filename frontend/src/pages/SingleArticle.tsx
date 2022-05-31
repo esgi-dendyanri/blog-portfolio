@@ -22,8 +22,6 @@ const SingleArticle = () => {
     getArticle(dispatch, params.slug || "")
   }, [params])
 
-  console.log("comments", comments)
-
   return (
     <Homepage>
       <Grid

@@ -13,7 +13,6 @@ export default function ArticleItem(props: any) {
       <Card sx={{
         background: "#fafafa",
         boxShadow: "none",
-
       }}>
         <CardMedia
           component="img"

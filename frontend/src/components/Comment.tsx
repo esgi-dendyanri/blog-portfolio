@@ -31,7 +31,13 @@ export default function Comment(props: CommentProps) {
   })()
 
   return (
-    <Card sx={{ marginBottom: 2 }}>
+    <Card sx={{
+      marginBottom: 2,
+      boxShadow: "none",
+      borderColor: "primary.main",
+      borderWidth: "1px",
+      borderStyle: "solid",
+    }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }}>

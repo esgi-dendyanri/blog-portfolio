@@ -1,21 +1,24 @@
 import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from './store'
 import Comment from "../interfaces/Comment.interface"
-import { getLatest } from '../services/Comment.service'
+import { getLatest, createOne } from '../services/Comment.service'
 import { likeComment, unlikeComment } from '../services/Like.service'
 import LatestComments from '../interfaces/LatestComments.interface'
+import { setUserName } from './User.slice'
+import { clearFields } from 'redux-form'
 
 // Define a type for the slice state
 interface CommentState {
   latests: LatestComments
+  add_comment_error: string | null
 }
 
 // Define the initial state using that type
 const initialState: CommentState = {
   latests: {} as LatestComments,
+  add_comment_error: null,
 }
 
-export const counterSlice = createSlice({
+export const commentSlice = createSlice({
   name: 'comments',
   initialState,
   reducers: {
@@ -38,12 +41,25 @@ export const counterSlice = createSlice({
       })
       state.latests.comments = comments
     },
+    addComment: (state, action: PayloadAction<Comment>) => {
+      state.latests = {
+        ...state.latests,
+        total: state.latests.total + 1,
+        comments: [
+          action.payload,
+          ...(state.latests.comments || []),
+        ]
+      }
+    },
+    setAddCommentError: (state, action: PayloadAction<string | null>) => {
+      state.add_comment_error = action.payload
+    }
   }
 })
 
-export const { setLatests, setComment } = counterSlice.actions
+export const { setLatests, setComment, addComment, setAddCommentError } = commentSlice.actions
 
-export default counterSlice.reducer
+export default commentSlice.reducer
 
 const mapComment: Function = (item: any): Comment => {
   let comment: Comment = {} as Comment;
@@ -57,12 +73,11 @@ const mapComment: Function = (item: any): Comment => {
   return comment;
 }
 
-export const getLatestComments = (dispatch: Dispatch<any>, article_id: string, limit: number, page: number) => {
+export const getLatestComments = (article_id: string, limit: number, page: number) => (dispatch: Dispatch<any>, getState: any) => {
   let latestComments: LatestComments = {} as LatestComments
 
   getLatest(article_id, limit, page)
   .then((response: any) => {
-    console.log("response", response)
     if ( response.status === 200 ) {
       let comments: Comment[] = [];
       response.data.comments.forEach((item: any) => {
@@ -72,14 +87,27 @@ export const getLatestComments = (dispatch: Dispatch<any>, article_id: string, l
       latestComments.page  = page
       latestComments.totalPage = response.data.totalPage
       latestComments.total = response.data.total
-      latestComments.comments = comments
-      dispatch(setLatests(latestComments))
+
+      let allComments = getState().comments.latests.comments || []
+      comments = comments.filter((comment: Comment) => {
+        let isFound = allComments.find((item: Comment) => {
+          return comment.id === item.id
+        })
+        if ( isFound )
+          return false
+
+        return true
+      })
+      if ( comments.length === 0 ) {
+        dispatch(getLatestComments(article_id, limit, page+1))
+      } else {
+        latestComments.comments = comments
+        dispatch(setLatests(latestComments))
+      }
     } else {
     }
   })
   .catch((err: any) => {
-    // console.log("Asdasd")
-    // console.error(err)
     latestComments.error = "Not responding"
 
     dispatch(setLatests(latestComments))
@@ -111,5 +139,26 @@ export const toggleLikeComment = (dispatch: Dispatch<any>, comment: Comment) => 
   })
   .catch((err: any) => {
     console.error(err)
+  })
+}
+
+export const createComment = (dispatch: Dispatch<any>, article_id: string, name: string, body: string) => {
+  dispatch(setAddCommentError(null))
+
+  createOne(article_id, name, body)
+  .then((response: any) => {
+    if ( response.status === 201 ) {
+      let comment: Comment = mapComment(response.data);
+      dispatch(addComment(comment))
+      dispatch(setUserName(name))
+      dispatch(clearFields('comment', false, false, 'body'))
+    } else {
+      dispatch(setAddCommentError(response.data || "Unable to add comment, please try again later"))
+    }
+  })
+  .catch((err: any) => {
+    console.error(err)
+
+    dispatch(setAddCommentError("Unable to add comment, please try again later"))
   })
 }

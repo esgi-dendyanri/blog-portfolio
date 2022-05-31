@@ -10,7 +10,7 @@ export const getLatest: any = (article_id: string, limit: number, page: number) 
   })
 }
 
-export const createComment: any = (article_id: string, name: string, body: string) => {
+export const createOne: any = (article_id: string, name: string, body: string) => {
   return API({
     url: "comments",
     method: "POST",

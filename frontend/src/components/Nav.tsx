@@ -27,7 +27,6 @@ import './Nav.css'
 let env: any = process.env
 
 
-console.log("let env: any = process.env", env)
 const ListItem = styled('li')(({ theme }) => ({
   margin: theme.spacing(0.5),
 }));

@@ -20,7 +20,7 @@ const initialState: ArticleState = {
   selected: {} as SingleArticle,
 }
 
-export const counterSlice = createSlice({
+export const articleSlice = createSlice({
   name: 'articles',
   initialState,
   reducers: {
@@ -31,15 +31,14 @@ export const counterSlice = createSlice({
       state.latests = action.payload
     },
     setSelected: (state, action: PayloadAction<SingleArticle>) => {
-      console.log("action.payload", action.payload)
       state.selected = action.payload
     },
   }
 })
 
-export const { setHighlight, setLatests, setSelected } = counterSlice.actions
+export const { setHighlight, setLatests, setSelected } = articleSlice.actions
 
-export default counterSlice.reducer
+export default articleSlice.reducer
 
 const mapArticle: Function = (item: any): Article => {
   let article: Article = {} as Article;
@@ -88,7 +87,6 @@ export const getLatestArticles = (dispatch: Dispatch<any>, limit: number, page: 
 
 export const getArticle = (dispatch: Dispatch<any>, slug: string) => {
   let singleArticle: SingleArticle = {} as SingleArticle
-  console.log("slug", slug)
 
   getOne(slug)
   .then((response: any) => {
@@ -100,7 +98,6 @@ export const getArticle = (dispatch: Dispatch<any>, slug: string) => {
     }
   })
   .catch((err: any) => {
-    console.log("asdasd", err)
     console.error(err)
     singleArticle.error = "Not responding"
 

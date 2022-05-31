@@ -11,6 +11,7 @@ import { LikesService } from 'src/likes/likes.service';
 import { Like } from 'src/likes/interfaces/like.interface';
 import { GetLikeDto } from 'src/likes/dto/get-like.dto';
 import LatestComments from './interfaces/latestComments.interface';
+import urlChecker from 'src/helper/urlChecker';
 
 @Injectable()
 export class CommentsService {
@@ -26,6 +27,9 @@ export class CommentsService {
     let article: Article = await this.articlesService.getArticleById(createCommentDto.article_id);
     if ( article === null ) {
       return null
+    }
+    if ( urlChecker.isContainUrl(createCommentDto.body) ) {
+      return "Comment CAN NOT contain URL"
     }
     const createdComment = new this.commentModel(createCommentDto)
     createdComment.article = article

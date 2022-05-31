@@ -21,6 +21,8 @@ export class CommentsController {
     let comment: Comment | string = await this.commentsService.create(createCommentDto);
     if ( comment === null )
       res.status(HttpStatus.NOT_FOUND).send("Article is not found")
+    else if ( typeof comment === 'string' )
+      res.status(HttpStatus.BAD_REQUEST).send(comment)
     else
       res.send(comment)
   }

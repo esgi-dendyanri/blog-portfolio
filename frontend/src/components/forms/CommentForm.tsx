@@ -3,6 +3,7 @@ import Input from '../fields/Input';
 import { required, maxLength, minLength } from '../../helper/fieldValidation'
 import { Box } from "@mui/system";
 import { Button, Typography } from "@mui/material";
+import Cookies from 'js-cookie'
 
 const validations: any = {
   name: [required, minLength(3)],
@@ -61,5 +62,8 @@ const CommentForm = (props: any) => {
 
 export default reduxForm({
   form: "comment",
-  validate
+  validate,
+  initialValues: {
+    name: Cookies.get("user_name")
+  }
 })(CommentForm);
