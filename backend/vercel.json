@@ -2,7 +2,7 @@
     "version": 2,
     "name": "blog-portofolio-backeend",
     "functions": {
-      "*": {
+      "dist/main.js": {
         "runtime": "@vercel/node@1.15.4"
       }
     }
