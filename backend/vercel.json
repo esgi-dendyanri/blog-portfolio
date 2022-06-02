@@ -3,7 +3,7 @@
     "name": "blog-portofolio-backeend",
     "functions": {
       "*": {
-        "runtime": "@vercel/node"
+        "runtime": "@vercel/node@1.15.4"
       }
     }
   }
